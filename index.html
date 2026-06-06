@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloudAdmin — Office Administration Management</title>
+  <meta name="description"
+    content="Cloud Office Administration Management System — manage employees, attendance, and leave from one premium dashboard.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/cloud-storage.png">
+
+  <!-- Google Fonts — Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <!-- Custom Styling -->
+  <link href="css/styles.css?v=3" rel="stylesheet">
+
+  <!-- Theme Pre-initialization -->
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+</head>
+
+<body>
+
+  <div id="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar-wrapper">
+      <div class="sidebar-brand">
+        <div class="logo-icon">
+          <i class="bi bi-cloud-check-fill"></i>
+        </div>
+        <span class="brand-name">CloudAdmin</span>
+      </div>
+
+      <div class="sidebar-menu">
+        <div class="menu-header">Core</div>
+        <a href="#/dashboard" class="nav-menu-item active" id="nav-dashboard">
+          <i class="bi bi-grid-1x2-fill"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <div class="menu-header">Management</div>
+        <a href="#/employees" class="nav-menu-item" id="nav-employees">
+          <i class="bi bi-people-fill"></i>
+          <span>Employees</span>
+        </a>
+        <a href="#/attendance" class="nav-menu-item" id="nav-attendance">
+          <i class="bi bi-calendar-check-fill"></i>
+          <span>Attendance</span>
+        </a>
+        <a href="#/leaves" class="nav-menu-item" id="nav-leaves">
+          <i class="bi bi-calendar-range-fill"></i>
+          <span>Leaves</span>
+        </a>
+      </div>
+
+
+    </aside>
+
+    <!-- Mobile Sidebar Backdrop -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <!-- MAIN WRAPPER -->
+    <main class="main-wrapper">
+
+      <!-- TOP NAVBAR -->
+      <header class="top-navbar">
+        <div class="d-flex align-items-center">
+          <button id="mobile-toggle" class="mobile-nav-toggle" aria-label="Toggle Sidebar">
+            <i class="bi bi-list fs-3"></i>
+          </button>
+
+          <div class="d-none d-md-flex align-items-center gap-2">
+            <span
+              style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:9999px;background:linear-gradient(135deg,rgba(37,99,235,0.08),rgba(6,182,212,0.08));border:1px solid rgba(37,99,235,0.15);font-size:0.78rem;font-weight:600;color:#2563eb;">
+              <i class="bi bi-shield-check"></i> Secured Cloud Portal
+            </span>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+
+          <!-- Theme Toggle Button -->
+          <button class="navbar-action-btn" type="button" id="theme-toggle-btn" aria-label="Toggle Theme">
+            <i class="bi bi-moon-fill" id="theme-toggle-icon"></i>
+          </button>
+
+          <!-- Notifications Quick Menu -->
+          <div class="dropdown">
+            <button class="navbar-action-btn" type="button" id="notificationDropdown" data-bs-toggle="dropdown"
+              aria-expanded="false" aria-label="Notifications">
+              <i class="bi bi-bell"></i>
+              <span class="btn-badge d-none" id="notification-badge"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2 p-0 overflow-hidden"
+              aria-labelledby="notificationDropdown" style="width: 290px;">
+              <li class="px-3 py-2 bg-light border-bottom d-flex justify-content-between align-items-center">
+                <span class="fw-bold fs-7">Notifications</span>
+                <span class="badge bg-danger rounded-pill" style="font-size: 0.7rem;" id="notification-count">0
+                  New</span>
+              </li>
+              <div id="notification-list" style="max-height: 250px; overflow-y: auto;">
+                <!-- JS Populated -->
+              </div>
+              <li class="border-top text-center py-2 bg-light">
+                <a href="#/leaves" class="text-decoration-none text-primary small fw-semibold fs-7">View all leave
+                  requests</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- User Quick Menu -->
+          <div class="dropdown">
+            <button class="btn p-0 border-0 d-flex align-items-center gap-2" type="button" id="userDropdown"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              <span class="fw-semibold text-secondary fs-7">Admin Portal</span>
+              <i class="bi bi-chevron-down text-muted fs-8"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2"
+              aria-labelledby="userDropdown">
+              <li class="px-3 py-2 border-bottom">
+                <div class="fw-bold">Admin Portal</div>
+                <div class="text-muted fs-7">admin.portal@cloudoffice.com</div>
+              </li>
+              <li><a class="dropdown-item mt-1" href="#/employees"><i class="bi bi-person me-2"></i>Manage Staff</a>
+              </li>
+              <li><a class="dropdown-item" href="#/dashboard"><i class="bi bi-gear me-2"></i>Portal Settings</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item text-danger" href="javascript:void(0)"><i
+                    class="bi bi-box-arrow-right me-2"></i>Sign Out</a></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT CONTAINER -->
+      <div class="content-container">
+
+        <!-- ========================================== -->
+        <!-- DASHBOARD VIEW -->
+        <!-- ========================================== -->
+        <section id="dashboard-view" class="app-view active">
+          <div class="row align-items-center mb-4">
+            <div class="col">
+              <h1 class="page-title">Admin Dashboard</h1>
+            </div>
+          </div>
+
+          <!-- Analytics Metric Cards -->
+          <div class="row g-4 mb-4">
+            <!-- Metric 1 -->
+            <div class="col-12 col-sm-6 col-xl-3">
+              <div class="custom-card analytics-card primary">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="text-secondary fw-semibold">Total Employees</span>
+                  <div class="analytics-icon-box primary">
+                    <i class="bi bi-people-fill"></i>
+                  </div>
+                </div>
+                <div class="analytics-value mb-2" id="stat-total-employees">0</div>
+                <span class="analytics-trend up">
+                  <i class="bi bi-arrow-up"></i> +12% this month
+                </span>
+              </div>
+            </div>
+            <!-- Metric 2 -->
+            <div class="col-12 col-sm-6 col-xl-3">
+              <div class="custom-card analytics-card success">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="text-secondary fw-semibold">Attendance Rate</span>
+                  <div class="analytics-icon-box success">
+                    <i class="bi bi-calendar-check-fill"></i>
+                  </div>
+                </div>
+                <div class="analytics-value mb-2" id="stat-attendance-rate">0%</div>
+                <span class="analytics-trend up">
+                  <i class="bi bi-arrow-up"></i> +0.8% variance
+                </span>
+              </div>
+            </div>
+            <!-- Metric 3 -->
+            <div class="col-12 col-sm-6 col-xl-3">
+              <div class="custom-card analytics-card warning">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="text-secondary fw-semibold">On Leave Today</span>
+                  <div class="analytics-icon-box warning">
+                    <i class="bi bi-house-door-fill"></i>
+                  </div>
+                </div>
+                <div class="analytics-value mb-2" id="stat-on-leave">0</div>
+                <span class="analytics-trend text-secondary">
+                  Scheduled leaves
+                </span>
+              </div>
+            </div>
+            <!-- Metric 4 -->
+            <div class="col-12 col-sm-6 col-xl-3">
+              <div class="custom-card analytics-card danger">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="text-secondary fw-semibold">Suspended Accounts</span>
+                  <div class="analytics-icon-box danger">
+                    <i class="bi bi-person-x-fill"></i>
+                  </div>
+                </div>
+                <div class="analytics-value mb-2" id="stat-suspended">0</div>
+                <span class="analytics-trend text-secondary">
+                  Action required
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Charts Row -->
+          <div class="row g-4 mb-4">
+            <!-- Line Chart -->
+            <div class="col-12 col-lg-8">
+              <div class="custom-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <h5 class="fw-bold mb-1">Admin Analytics</h5>
+                </div>
+                <div style="height: 300px; position: relative;">
+                  <canvas id="growthChart"></canvas>
+                </div>
+              </div>
+            </div>
+            <!-- Donut Chart -->
+            <div class="col-12 col-lg-4">
+              <div class="custom-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <div>
+                    <h5 class="fw-bold mb-1">Departments</h5>
+                    <p class="text-muted small mb-0">Staff distribution by team</p>
+                  </div>
+                </div>
+                <div style="height: 300px; position: relative;">
+                  <canvas id="departmentChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Shortcuts Row -->
+          <div class="row g-4">
+            <div class="col-12">
+              <div class="custom-card">
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <a href="#/employees" class="btn btn-outline-primary w-100 text-center py-3 border-dashed">
+                      <i class="bi bi-person-plus fs-4 d-block mb-2"></i> Go to Employee Setup
+                    </a>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <button type="button" class="btn btn-outline-secondary w-100 text-center py-3"
+                      data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                      <i class="bi bi-plus-lg fs-4 d-block mb-2"></i> Register New Staff Profile
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- EMPLOYEE MANAGEMENT VIEW -->
+        <!-- ========================================== -->
+        <section id="employees-view" class="app-view">
+          <div class="row align-items-center mb-4">
+            <div class="col">
+              <h1 class="page-title">Employee Management</h1>
+            </div>
+            <div class="col-auto">
+              <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                <i class="bi bi-plus-lg me-2"></i> Add Employee
+              </button>
+            </div>
+          </div>
+
+          <div class="custom-card p-0 overflow-hidden mb-4">
+
+            <!-- Filters Toolbar -->
+            <div
+              class="p-3 bg-light border-bottom d-flex flex-column flex-md-row gap-3 justify-content-between align-items-md-center">
+
+              <!-- Search -->
+              <div class="search-input-group w-100">
+                <i class="bi bi-search"></i>
+                <input type="text" id="employee-search" class="form-control"
+                  placeholder="Search by name, role, email or ID...">
+              </div>
+
+              <!-- Filter Selects -->
+              <div class="d-flex flex-wrap gap-2 w-100 justify-content-md-end">
+                <select id="filter-department" class="form-select bg-white" style="max-width: 170px;"
+                  aria-label="Filter Department">
+                  <option value="">All Departments</option>
+                  <option value="IT">IT</option>
+                  <option value="HR">HR</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Operations">Operations</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Support">Support</option>
+                  <option value="Administration">Administration</option>
+                </select>
+
+                <select id="filter-status" class="form-select bg-white" style="max-width: 150px;"
+                  aria-label="Filter Status">
+                  <option value="">All Statuses</option>
+                  <option value="Active">Active</option>
+                  <option value="On Leave">On Leave</option>
+                  <option value="Suspended">Suspended</option>
+                </select>
+              </div>
+
+            </div>
+
+            <!-- Table -->
+            <div class="table-responsive">
+              <table class="table custom-table align-middle">
+                <thead>
+                  <tr>
+                    <th>Emp ID</th>
+                    <th>Employee Name</th>
+                    <th>Department</th>
+                    <th>Job Title</th>
+                    <th>Date Hired</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="employee-table-body">
+                  <!-- JS Populated -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Footer (Mock) -->
+            <div class="p-3 bg-light border-top d-flex justify-content-between align-items-center">
+              <span class="text-secondary small">Showing all active records</span>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- ATTENDANCE MANAGEMENT VIEW -->
+        <!-- ========================================== -->
+        <section id="attendance-view" class="app-view">
+          <div class="row align-items-center mb-4">
+            <div class="col">
+              <h1 class="page-title">Attendance Tracking</h1>
+            </div>
+            <div class="col-auto">
+              <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#markAttendanceModal">
+                <i class="bi bi-calendar-plus me-2"></i> Mark Attendance
+              </button>
+            </div>
+          </div>
+
+          <!-- Attendance Summary Cards -->
+          <div class="row g-4 mb-4">
+            <!-- Card 1: Total Present -->
+            <div class="col-12 col-sm-6 col-lg-3">
+              <div class="custom-card analytics-card success">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="text-secondary fw-semibold">Total Present</span>
+                  <div class="analytics-icon-box success">
+                    <i class="bi bi-person-check-fill"></i>
+                  </div>
+                </div>
+                <div class="analytics-value mb-2" id="attendance-stat-present">0</div>
+                <span class="analytics-trend up" id="attendance-trend-present">
+                  Active today
+                </span>
+              </div>
+            </div>
+            <!-- Card 2: Total Absent -->
+            <div class="col-12 col-sm-6 col-lg-3">
+              <div class="custom-card analytics-card danger">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="text-secondary fw-semibold">Total Absent</span>
+                  <div class="analytics-icon-box danger">
+                    <i class="bi bi-person-x-fill"></i>
+                  </div>
+                </div>
+                <div class="analytics-value mb-2" id="attendance-stat-absent">0</div>
+                <span class="analytics-trend down" id="attendance-trend-absent">
+                  Action required
+                </span>
+              </div>
+            </div>
+            <!-- Card 3: Late Arrivals -->
+            <div class="col-12 col-sm-6 col-lg-3">
+              <div class="custom-card analytics-card warning">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="text-secondary fw-semibold">Late Arrivals</span>
+                  <div class="analytics-icon-box warning">
+                    <i class="bi bi-clock-history"></i>
+                  </div>
+                </div>
+                <div class="analytics-value mb-2" id="attendance-stat-late">0</div>
+                <span class="analytics-trend text-warning" id="attendance-trend-late">
+                  Tardy records
+                </span>
+              </div>
+            </div>
+            <!-- Card 4: Attendance Rate -->
+            <div class="col-12 col-sm-6 col-lg-3">
+              <div class="custom-card analytics-card primary">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="text-secondary fw-semibold">Attendance Rate</span>
+                  <div class="analytics-icon-box primary">
+                    <i class="bi bi-percent"></i>
+                  </div>
+                </div>
+                <div class="analytics-value mb-2" id="attendance-stat-rate">0%</div>
+                <span class="analytics-trend text-primary" id="attendance-trend-rate">
+                  Of active staff
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="custom-card p-0 overflow-hidden mb-4">
+            <!-- Filters Toolbar -->
+            <div
+              class="p-3 bg-light border-bottom d-flex flex-column flex-md-row gap-3 justify-content-between align-items-md-center">
+              <!-- Search -->
+              <div class="search-input-group w-100">
+                <i class="bi bi-search"></i>
+                <input type="text" id="attendance-search" class="form-control"
+                  placeholder="Search by name, ID or role...">
+              </div>
+
+              <!-- Filter Selects -->
+              <div class="d-flex flex-wrap gap-2 w-100 justify-content-md-end">
+                <input type="date" id="filter-attendance-date" class="form-control bg-white" style="max-width: 170px;"
+                  aria-label="Filter Date">
+
+                <select id="filter-attendance-status" class="form-select bg-white" style="max-width: 150px;"
+                  aria-label="Filter Status">
+                  <option value="">All Statuses</option>
+                  <option value="Present">Present</option>
+                  <option value="Absent">Absent</option>
+                  <option value="Late">Late</option>
+                  <option value="Half Day">Half Day</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-responsive">
+              <table class="table custom-table align-middle">
+                <thead>
+                  <tr>
+                    <th>Emp ID</th>
+                    <th>Employee Name</th>
+                    <th>Date</th>
+                    <th>Clock In</th>
+                    <th>Clock Out</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="attendance-table-body">
+                  <!-- JS Populated -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Footer (Mock) -->
+            <div class="p-3 bg-light border-top d-flex justify-content-between align-items-center">
+              <span class="text-secondary small" id="attendance-record-count">Showing all attendance records</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- LEAVE MANAGEMENT VIEW -->
+        <!-- ========================================== -->
+        <section id="leave-view" class="app-view">
+          <div class="row align-items-center mb-4">
+            <div class="col">
+              <h1 class="page-title">Leave Management</h1>
+            </div>
+            <div class="col-auto">
+              <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#requestLeaveModal">
+                <i class="bi bi-file-earmark-plus me-2"></i> Request Leave
+              </button>
+            </div>
+          </div>
+
+          <div class="custom-card p-0 overflow-hidden mb-4">
+            <!-- Filters Toolbar -->
+            <div
+              class="p-3 bg-light border-bottom d-flex flex-column flex-md-row gap-3 justify-content-between align-items-md-center">
+              <!-- Search -->
+              <div class="search-input-group w-100">
+                <i class="bi bi-search"></i>
+                <input type="text" id="leave-search" class="form-control" placeholder="Search leave requests...">
+              </div>
+
+              <!-- Filter Selects -->
+              <div class="d-flex flex-wrap gap-2 w-100 justify-content-md-end">
+                <select id="filter-leave-type" class="form-select bg-white" style="max-width: 170px;"
+                  aria-label="Filter Leave Type">
+                  <option value="">All Leave Types</option>
+                  <option value="Sick Leave">Sick Leave</option>
+                  <option value="Casual Leave">Casual Leave</option>
+                  <option value="Annual Leave">Annual Leave</option>
+                  <option value="Maternity Leave">Maternity Leave</option>
+                </select>
+
+                <select id="filter-leave-status" class="form-select bg-white" style="max-width: 150px;"
+                  aria-label="Filter Status">
+                  <option value="">All Statuses</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Approved">Approved</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-responsive">
+              <table class="table custom-table align-middle">
+                <thead>
+                  <tr>
+                    <th>Req ID</th>
+                    <th>Employee Name</th>
+                    <th>Leave Type</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="leave-table-body">
+                  <!-- JS Populated -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Footer (Mock) -->
+            <div class="p-3 bg-light border-top d-flex justify-content-between align-items-center">
+              <span class="text-secondary small" id="leave-record-count">Showing all leave requests</span>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- ADD EMPLOYEE MODAL -->
+  <!-- ========================================== -->
+  <div class="modal fade custom-modal" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addEmployeeModalLabel">Add New Employee Profile</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="addEmployeeForm">
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-12">
+                <label for="add-name" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="add-name" required placeholder="John Doe">
+              </div>
+              <div class="col-md-6">
+                <label for="add-email" class="form-label">Work Email</label>
+                <input type="email" class="form-control" id="add-email" required placeholder="john.doe@company.com">
+              </div>
+              <div class="col-md-6">
+                <label for="add-phone" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="add-phone" required placeholder="+1 (555) 012-3456">
+              </div>
+              <div class="col-md-6">
+                <label for="add-department" class="form-label">Department</label>
+                <select class="form-select" id="add-department" required>
+                  <option value="" disabled selected>Select Department</option>
+                  <option value="IT">IT</option>
+                  <option value="HR">HR</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Operations">Operations</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Support">Support</option>
+                  <option value="Administration">Administration</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="add-role" class="form-label">Job Role</label>
+                <input type="text" class="form-control" id="add-role" required placeholder="e.g. Systems Analyst">
+              </div>
+              <div class="col-md-6">
+                <label for="add-status" class="form-label">Account Status</label>
+                <select class="form-select" id="add-status" required>
+                  <option value="Active">Active</option>
+                  <option value="On Leave">On Leave</option>
+                  <option value="Suspended">Suspended</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="add-hiredate" class="form-label">Date of Hire</label>
+                <input type="date" class="form-control" id="add-hiredate" required>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary-custom">Create Profile</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- EDIT EMPLOYEE MODAL -->
+  <!-- ========================================== -->
+  <div class="modal fade custom-modal" id="editEmployeeModal" tabindex="-1" aria-labelledby="editEmployeeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editEmployeeModalLabel">Edit Employee Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="editEmployeeForm">
+          <input type="hidden" id="edit-emp-id">
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-12">
+                <label for="edit-name" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="edit-name" required>
+              </div>
+              <div class="col-md-6">
+                <label for="edit-email" class="form-label">Work Email</label>
+                <input type="email" class="form-control" id="edit-email" required>
+              </div>
+              <div class="col-md-6">
+                <label for="edit-phone" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="edit-phone" required>
+              </div>
+              <div class="col-md-6">
+                <label for="edit-department" class="form-label">Department</label>
+                <select class="form-select" id="edit-department" required>
+                  <option value="IT">IT</option>
+                  <option value="HR">HR</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Operations">Operations</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Support">Support</option>
+                  <option value="Administration">Administration</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="edit-role" class="form-label">Job Role</label>
+                <input type="text" class="form-control" id="edit-role" required>
+              </div>
+              <div class="col-md-6">
+                <label for="edit-status" class="form-label">Account Status</label>
+                <select class="form-select" id="edit-status" required>
+                  <option value="Active">Active</option>
+                  <option value="On Leave">On Leave</option>
+                  <option value="Suspended">Suspended</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="edit-hiredate" class="form-label">Date of Hire</label>
+                <input type="date" class="form-control" id="edit-hiredate" required>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary-custom">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MARK ATTENDANCE MODAL -->
+  <!-- ========================================== -->
+  <div class="modal fade custom-modal" id="markAttendanceModal" tabindex="-1" aria-labelledby="markAttendanceModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="markAttendanceModalLabel">Mark Attendance</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="markAttendanceForm">
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-12">
+                <label for="attendance-emp-select" class="form-label">Select Employee</label>
+                <select class="form-select" id="attendance-emp-select" required>
+                  <option value="" disabled selected>Select Employee</option>
+                  <!-- JS Populated -->
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="attendance-date" class="form-label">Date</label>
+                <input type="date" class="form-control" id="attendance-date" required>
+              </div>
+              <div class="col-md-6">
+                <label for="attendance-status" class="form-label">Status</label>
+                <select class="form-select" id="attendance-status" required>
+                  <option value="Present">Present</option>
+                  <option value="Late">Late</option>
+                  <option value="Half Day">Half Day</option>
+                  <option value="Absent">Absent</option>
+                </select>
+              </div>
+              <div class="col-md-6" id="clock-in-wrapper">
+                <label for="attendance-clock-in" class="form-label">Clock In Time</label>
+                <input type="time" class="form-control" id="attendance-clock-in" value="09:00">
+              </div>
+              <div class="col-md-6" id="clock-out-wrapper">
+                <label for="attendance-clock-out" class="form-label">Clock Out Time</label>
+                <input type="time" class="form-control" id="attendance-clock-out" value="18:00">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary-custom">Submit Record</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- REQUEST LEAVE MODAL -->
+  <!-- ========================================== -->
+  <div class="modal fade custom-modal" id="requestLeaveModal" tabindex="-1" aria-labelledby="requestLeaveModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="requestLeaveModalLabel">Submit Leave Request</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="requestLeaveForm">
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-12">
+                <label for="leave-emp-select" class="form-label">Select Employee</label>
+                <select class="form-select" id="leave-emp-select" required>
+                  <option value="" disabled selected>Select Employee</option>
+                  <!-- JS Populated -->
+                </select>
+              </div>
+              <div class="col-12">
+                <label for="leave-type" class="form-label">Leave Type</label>
+                <select class="form-select" id="leave-type" required>
+                  <option value="" disabled selected>Select Leave Type</option>
+                  <option value="Sick Leave">Sick Leave</option>
+                  <option value="Casual Leave">Casual Leave</option>
+                  <option value="Annual Leave">Annual Leave</option>
+                  <option value="Maternity Leave">Maternity Leave</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="leave-start-date" class="form-label">Start Date</label>
+                <input type="date" class="form-control" id="leave-start-date" required>
+              </div>
+              <div class="col-md-6">
+                <label for="leave-end-date" class="form-label">End Date</label>
+                <input type="date" class="form-control" id="leave-end-date" required>
+              </div>
+              <div class="col-12">
+                <label for="leave-reason" class="form-label">Reason</label>
+                <textarea class="form-control" id="leave-reason" rows="3"
+                  placeholder="Brief explanation for leave request..." required></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary-custom">Submit Request</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- EDIT ATTENDANCE MODAL -->
+  <!-- ========================================== -->
+  <div class="modal fade custom-modal" id="editAttendanceModal" tabindex="-1" aria-labelledby="editAttendanceModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editAttendanceModalLabel">Edit Attendance Record</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="editAttendanceForm">
+          <input type="hidden" id="edit-attendance-emp-id">
+          <input type="hidden" id="edit-attendance-date">
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label">Employee</label>
+                <input type="text" class="form-control bg-light" id="edit-attendance-emp-name" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Date</label>
+                <input type="text" class="form-control bg-light" id="edit-attendance-date-display" readonly>
+              </div>
+              <div class="col-md-6">
+                <label for="edit-attendance-status" class="form-label">Status</label>
+                <select class="form-select" id="edit-attendance-status" required>
+                  <option value="Present">Present</option>
+                  <option value="Late">Late</option>
+                  <option value="Half Day">Half Day</option>
+                  <option value="Absent">Absent</option>
+                </select>
+              </div>
+              <div class="col-md-6" id="edit-clock-in-wrapper">
+                <label for="edit-attendance-clock-in" class="form-label">Clock In Time</label>
+                <input type="time" class="form-control" id="edit-attendance-clock-in" value="09:00">
+              </div>
+              <div class="col-md-6" id="edit-clock-out-wrapper">
+                <label for="edit-attendance-clock-out" class="form-label">Clock Out Time</label>
+                <input type="time" class="form-control" id="edit-attendance-clock-out" value="18:00">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary-custom">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 Bundle with Popper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  <!-- Application Script Modules -->
+  <script src="js/charts.js"></script>
+  <script src="js/app.js?v=2"></script>
+</body>
+
+</html>

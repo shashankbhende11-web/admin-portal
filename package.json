@@ -1,0 +1,18 @@
+{
+  "name": "cloud-office-management-system",
+  "version": "1.0.0",
+  "description": "Cloud-Based Office Administration Management System Frontend",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx -y serve ."
+  },
+  "keywords": [
+    "office",
+    "dashboard",
+    "management",
+    "admin",
+    "bootstrap"
+  ],
+  "author": "",
+  "license": "ISC"
+}
