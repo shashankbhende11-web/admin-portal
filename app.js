@@ -320,6 +320,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Set initial page/route load
   handleRoute();
+  const { data, error } = await supabase
+  .from('employees')
+  .select('*');
+
+if (error) {
+  console.error(error);
+} else {
+  updateCharts(data); // 🔥 YE LINE ADD KAR
+}
 });
 
 // Hash-based client-side router
